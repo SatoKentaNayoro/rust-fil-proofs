@@ -16,6 +16,7 @@ use rand::{rngs::OsRng, RngCore};
 use rayon::prelude::{
     IndexedParallelIterator, IntoParallelIterator, IntoParallelRefIterator, ParallelIterator,
 };
+use serde_json::Value;
 
 use crate::{
     error::Result,
@@ -126,6 +127,32 @@ where
         info!("snark_proof:start");
         let groth_proofs = Self::circuit_proofs(
             pub_in,
+            vanilla_proofs,
+            &pub_params.vanilla_params,
+            groth_params,
+            pub_params.priority,
+        )?;
+        info!("snark_proof:finish");
+
+        Ok(MultiProof::new(groth_proofs, &groth_params.pvk))
+    }
+
+
+    fn prove_with_vanilla_by_snark_server<'b>(
+        pub_params: &PublicParams<'a, S>,
+        pub_in_v: Value,
+        vanilla_proofs_v: Value,
+        groth_params: &'b groth16::MappedParameters<Bls12>,
+    ) -> Result<MultiProof<'b>> {
+        let partition_count = Self::partition_count(pub_params);
+        let pub_in = serde_json::from_value::<S::PublicInputs>(pub_in_v)?;
+        let vanilla_proofs = serde_json::from_value::<Vec<S::Proof>>(vanilla_proofs_v)?;
+        // This will always run at least once, since there cannot be zero partitions.
+        ensure!(partition_count > 0, "There must be partitions");
+
+        info!("snark_proof:start");
+        let groth_proofs = Self::circuit_proofs(
+            &pub_in,
             vanilla_proofs,
             &pub_params.vanilla_params,
             groth_params,
