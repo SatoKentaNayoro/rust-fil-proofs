@@ -17,7 +17,7 @@ use crate::{
 };
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct PoStConfig {
     pub sector_size: SectorSize,
     pub challenge_count: usize,
