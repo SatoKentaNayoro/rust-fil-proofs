@@ -15,6 +15,7 @@ use crate::{
     parameters::{window_post_public_params, winning_post_public_params},
     types::{PaddedBytesAmount, SectorSize, UnpaddedBytesAmount},
 };
+use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug)]
 pub struct PoStConfig {
@@ -27,7 +28,7 @@ pub struct PoStConfig {
     pub api_version: ApiVersion,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
 pub enum PoStType {
     Winning,
     Window,
