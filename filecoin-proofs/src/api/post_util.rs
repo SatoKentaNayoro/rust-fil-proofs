@@ -245,7 +245,7 @@ pub fn partition_vanilla_proofs<Tree: MerkleTreeTrait>(
     Ok(partition_proofs)
 }
 
-pub(crate) fn get_partitions_for_window_post(
+pub fn get_partitions_for_window_post(
     total_sector_count: usize,
     post_config: &PoStConfig,
 ) -> Option<usize> {
